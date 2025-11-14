@@ -9,11 +9,14 @@ export const BET_AMOUNT = 10;
 // Definição das Cartas de Risco (Probabilidade enviesada: House Edge)
 export const RISK_CARDS = [
     // Bronze: Risco Baixo (Multiplicador baixo, mas EV negativo)
-    { id: '1', name: 'Bronze', multiplier: 1.5, winChance: 0.60, color: '#cd7f32', theme: 'Risco Baixo' },
+    // Chance WIN: 40%
+    { id: '1', name: 'Bronze', multiplier: 1.5, winChance: 0.40, color: '#cd7f32', theme: 'Risco Baixo' },
     // Prata: Risco Médio
-    { id: '2', name: 'Prata', multiplier: 3, winChance: 0.32, color: '#c0c0c0', theme: 'Risco Médio' },
+    // Chance WIN: 20%
+    { id: '2', name: 'Prata', multiplier: 3, winChance: 0.20, color: '#c0c0c0', theme: 'Risco Médio' },
     // Ouro: Risco Alto (Ganância, Multiplicador alto, EV mais negativo)
-    { id: '3', name: 'Ouro', multiplier: 10, winChance: 0.09, color: '#FFD700', theme: 'Risco Alto' },
+    // Chance WIN: 5%
+    { id: '3', name: 'Ouro', multiplier: 10, winChance: 0.05, color: '#FFD700', theme: 'Risco Alto' },
 ];
 
 // Posições visuais do Monte
@@ -81,6 +84,21 @@ export const GameProvider = ({ children }) => {
         setWinStreak(0);
     };
 
+    // NOVO: Função para adicionar saldo (simulação de depósito)
+    const deposit = useCallback((amount) => {
+        // Garante que apenas o valor inteiro seja depositado
+        const integerAmount = Math.floor(amount); 
+        if (integerAmount > 0) {
+            setBalance(prev => prev + integerAmount);
+            // Atualiza o último registro no histórico de apostas
+            setBets(prev => {
+                const lastBet = prev[prev.length - 1];
+                return [...prev.slice(0, -1), { ...lastBet, balance: lastBet.balance + integerAmount }];
+            });
+        }
+    }, []);
+
+
     const contextValue = useMemo(() => ({
         balance,
         bets,
@@ -91,8 +109,9 @@ export const GameProvider = ({ children }) => {
         VISUAL_POSITIONS,
         placeBet: processBet, 
         resetGame,
+        deposit,
         calculateExpectedValue,
-    }), [balance, bets, ruinCount, round, winStreak, processBet]);
+    }), [balance, bets, ruinCount, round, winStreak, processBet, deposit]);
 
     return (
         <GameContext.Provider value={contextValue}>
