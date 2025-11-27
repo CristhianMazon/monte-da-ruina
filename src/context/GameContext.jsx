@@ -8,8 +8,13 @@ const INITIAL_BALANCE = 100.0;
 export const BET_AMOUNT = 10;
 
 export const RISK_CARDS = [
-    { id: '1', name: 'Bronze', multiplier: 1.5, winChance: 0.40, color: '#cd7f32', theme: 'Risco Baixo' }, 
-    { id: '2', name: 'Prata', multiplier: 3, winChance: 0.20, color: '#c0c0c0', theme: 'Risco Médio' }, 
+    // BRONZE ATUALIZADO: 45% de Chance | Multiplicador 2x
+    { id: '1', name: 'Bronze', multiplier: 2, winChance: 0.45, color: '#cd7f32', theme: 'Risco Baixo' }, 
+    
+    // PRATA ATUALIZADO: Multiplicador 4x
+    { id: '2', name: 'Prata', multiplier: 4, winChance: 0.20, color: '#c0c0c0', theme: 'Risco Médio' }, 
+    
+    // OURO (Mantido): Multiplicador 10x
     { id: '3', name: 'Ouro', multiplier: 10, winChance: 0.05, color: '#FBBF24', theme: 'Risco Alto' }, 
 ];
 
@@ -28,51 +33,38 @@ export const calculateExpectedValue = (card) => {
 export const GameProvider = ({ children }) => {
     const { user } = useAuth();
     
-    // Estados do Jogo
     const [balance, setBalance] = useState(INITIAL_BALANCE);
     const [bets, setBets] = useState([{ round: 0, balance: INITIAL_BALANCE }]); 
     const [ruinCount, setRuinCount] = useState(0);
     const [round, setRound] = useState(1);
     const [winStreak, setWinStreak] = useState(0);
-
-    // TRAVA DE SEGURANÇA: Só permite salvar depois de carregar
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    // --- 1. CARREGAR DADOS (Load) ---
     useEffect(() => {
         if (user && user.name) {
-            // Bloqueia salvamento enquanto carrega
             setIsDataLoaded(false); 
-            
             const saveKey = `monte_ruina_gamestate_${user.name}`;
             const savedDataString = localStorage.getItem(saveKey);
 
             if (savedDataString) {
-                // Se achou save, carrega TUDO
                 const data = JSON.parse(savedDataString);
                 setBalance(data.balance);
-                // Garante que bets seja um array válido
                 setBets(Array.isArray(data.bets) && data.bets.length > 0 ? data.bets : [{ round: 0, balance: INITIAL_BALANCE }]);
                 setRuinCount(data.ruinCount || 0);
                 setRound(data.round || 1);
                 setWinStreak(data.winStreak || 0);
             } else {
-                // Se é usuário novo, reseta para o padrão
                 setBalance(INITIAL_BALANCE);
                 setBets([{ round: 0, balance: INITIAL_BALANCE }]);
                 setRuinCount(0);
                 setRound(1);
                 setWinStreak(0);
             }
-            
-            // Libera o salvamento agora que os dados estão na memória
             setIsDataLoaded(true); 
         }
     }, [user]); 
 
-    // --- 2. SALVAR DADOS (Save) ---
     useEffect(() => {
-        // A MÁGICA: Só salva se o usuário existe E se os dados já foram carregados
         if (user && user.name && isDataLoaded) {
             const saveKey = `monte_ruina_gamestate_${user.name}`;
             const gameState = {
