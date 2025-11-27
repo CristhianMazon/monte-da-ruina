@@ -23,6 +23,7 @@ const HANDCRAFTED_ADS = [
     { text: "🕵️ DESCUBRA SE VOCÊ É CORNO.", subtext: "Nós seguimos sua esposa. Se não acharmos nada, contratamos um ator." },
     { text: "🔧 MECÂNICO DE CONFIANÇA (DA MÃE DELE).", subtext: "Conserto o barulho do motor aumentando o volume do rádio." },
     { text: "✂️ CIRURGIA PLÁSTICA NA GARAGEM.", subtext: "Traga sua própria faca e ganhe desconto na anestesia (vodka)." },
+    { text: "👻 LIMPE SEU NOME NO SPC/SERASA COM MAGIA NEGRA!", subtext: "Pacto renovável mensalmente. Aceitamos alma como entrada." },
     { text: "📜 FALSIFICAÇÃO DE ATESTADO DE ÓBITO.", subtext: "Não quer ir trabalhar segunda? Mate-se legalmente." },
     { text: "🥊 APANHE DE UM PROFISSIONAL.", subtext: "Alivia o estresse (meu, não o seu). R$ 50 por soco." },
     { text: "🔥 QUEIMO ARQUIVO E PONHO A CULPA NO ESTAGIÁRIO.", subtext: "Serviço corporativo discreto. Emitimos nota fiscal fria." },
@@ -39,6 +40,7 @@ const HANDCRAFTED_ADS = [
     
     // RELACIONAMENTO & PESSOAL
     { text: "💔 NAMORE UM PRESIDIÁRIO.", subtext: "Ele nunca vai te trair (porque não pode sair). Cartas semanais." },
+    { text: "💋 MÃES SOLTEIRAS EM SEU BAIRRO QUEREM CONHECER VOCÊ AGORA!", subtext: "Elas odeiam joguinhos... mas adoram quem ganha no Monte da Ruína!" },
     { text: "🤰 BARRIGA DE ALUGUEL (DE CERVEJA).", subtext: "Eu bebo, você fica com a barriga. Troca justa." },
     { text: "👵 ALUGO AVÓ PARA O NATAL.", subtext: "Ela faz rabanada, pergunta das namoradinhas e dorme no sofá." },
     { text: "👶 TROCO BEBÊ CHORÃO POR PLAYSTATION 5.", subtext: "O bebê é fofo, mas não roda GTA VI. Negócio urgente." },
