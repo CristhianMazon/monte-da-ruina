@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
-// IMPORTANTE: Importar o useAuth para saber QUEM está jogando
 import { useAuth } from "./AuthContext";
 
 const GameContext = createContext(null);
@@ -27,7 +26,6 @@ export const calculateExpectedValue = (card) => {
 };
 
 export const GameProvider = ({ children }) => {
-    // Pegamos o usuário logado para criar o "cofre" dele
     const { user } = useAuth();
     
     const [balance, setBalance] = useState(INITIAL_BALANCE);
@@ -36,31 +34,26 @@ export const GameProvider = ({ children }) => {
     const [round, setRound] = useState(1);
     const [winStreak, setWinStreak] = useState(0);
 
-    // --- EFEITO 1: CARREGAR SALDO QUANDO O USUÁRIO MUDA (LOGIN) ---
+    // Carregar saldo ao trocar de usuário
     useEffect(() => {
         if (user && user.name) {
-            // Cria uma chave única para esse usuário: ex "monte_ruina_balance_Cristhian"
             const userKey = `monte_ruina_balance_${user.name}`;
             const savedBalance = localStorage.getItem(userKey);
 
             if (savedBalance) {
-                // Se ele já jogou, carrega o saldo dele
                 const val = parseFloat(savedBalance);
                 setBalance(val);
-                // Reinicia o histórico visual para não misturar com o do jogador anterior
                 setBets([{ round: 0, balance: val }]); 
             } else {
-                // Se é um jogador novo, começa com 100tão
                 setBalance(INITIAL_BALANCE);
                 setBets([{ round: 0, balance: INITIAL_BALANCE }]);
             }
-            // Resetar estados da rodada ao trocar de usuário
             setRound(1);
             setWinStreak(0);
         }
-    }, [user]); // Roda sempre que o 'user' mudar (login/logout)
+    }, [user]);
 
-    // --- EFEITO 2: SALVAR SALDO AUTOMATICAMENTE ---
+    // Salvar saldo automaticamente
     useEffect(() => {
         if (user && user.name) {
             const userKey = `monte_ruina_balance_${user.name}`;
@@ -68,38 +61,46 @@ export const GameProvider = ({ children }) => {
         }
     }, [balance, user]);
 
-    const processBet = useCallback((betAmount, cardId) => {
+    // --- NOVA LÓGICA: SEPARAR CÁLCULO DE ATUALIZAÇÃO ---
+
+    // 1. Apenas calcula o resultado (Matemática pura, sem mexer no saldo)
+    const simulateRound = useCallback((betAmount, cardId) => {
         const card = RISK_CARDS.find(c => c.id === cardId);
-        if (!card || balance < betAmount) return { error: "Erro de aposta ou saldo." };
+        if (!card) return null;
 
         const isWin = Math.random() < card.winChance;
-        let newBalance = balance;
-        let payout = 0;
-        
-        let newWinStreak = 0;
+        // Lucro puro (sem contar a aposta base, já que a lógica de dedução é separada)
+        const payout = betAmount * (card.multiplier - 1); 
 
-        if (isWin) {
-            payout = betAmount * (card.multiplier - 1);
-            newBalance += payout;
-            newWinStreak = winStreak + 1;
-        } else {
-            newBalance -= betAmount;
-            newWinStreak = 0;
-        }
+        return { isWin, card, payout, betAmount };
+    }, []);
 
-        newBalance = Math.max(0, newBalance);
-        setBalance(newBalance);
-        setWinStreak(newWinStreak);
+    // 2. Aplica o resultado no saldo (Chamado só depois da animação)
+    const commitRound = useCallback((result) => {
+        setBalance(prevBalance => {
+            let newBalance = prevBalance;
+            
+            if (result.isWin) {
+                newBalance += result.payout; // Ganhou: Soma o lucro
+            } else {
+                newBalance -= result.betAmount; // Perdeu: Subtrai a aposta
+            }
+
+            newBalance = Math.max(0, newBalance); // Nunca negativo
+
+            // Atualiza histórico dentro do callback para garantir sincronia
+            setBets(prevBets => [...prevBets, { round: prevBets.length, balance: newBalance }]);
+            
+            if (newBalance === 0) setRuinCount(prev => prev + 1);
+
+            return newBalance;
+        });
+
+        setWinStreak(prev => result.isWin ? prev + 1 : 0);
         setRound(prev => prev + 1);
-        setBets(prev => [...prev, { round: prev.length, balance: newBalance }]);
-
-        if (newBalance === 0) setRuinCount(prev => prev + 1);
-
-        return { isWin, card, payout, newBalance, betAmount };
-    }, [balance, winStreak]);
+    }, []);
 
     const resetGame = () => {
-        // Reseta apenas o jogo ATUAL, voltando o saldo para 100
         setBalance(INITIAL_BALANCE);
         setBets([{ round: 0, balance: INITIAL_BALANCE }]);
         setRound(1);
@@ -138,12 +139,13 @@ export const GameProvider = ({ children }) => {
         winStreak,
         RISK_CARDS,
         VISUAL_POSITIONS,
-        placeBet: processBet, 
+        simulateRound, // Nova função exportada
+        commitRound,   // Nova função exportada
         resetGame,
         deposit,
         withdraw,
         calculateExpectedValue,
-    }), [balance, bets, ruinCount, round, winStreak, processBet, deposit, withdraw]);
+    }), [balance, bets, ruinCount, round, winStreak, simulateRound, commitRound, deposit, withdraw]);
 
     return (
         <GameContext.Provider value={contextValue}>
