@@ -120,7 +120,7 @@ const FooterAds = () => {
         const interval = setInterval(() => {
             // Sorteia novo índice a cada 4s
             setCurrentIndex(Math.floor(Math.random() * FAKE_ADS.length));
-        }, 4000);
+        }, 8000);
         return () => clearInterval(interval);
     }, []);
 
