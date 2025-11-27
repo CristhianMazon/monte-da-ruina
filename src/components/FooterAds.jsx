@@ -156,7 +156,7 @@ const FooterAds = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % FAKE_ADS.length);
-        }, 4000);
+        }, 8000);
         return () => clearInterval(interval);
     }, []);
 
