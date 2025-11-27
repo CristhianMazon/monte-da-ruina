@@ -2,27 +2,33 @@
 
 > "O limite do capital é o limite do risco."
 
-Bem-vindo ao **Monte da Ruína**, um simulador de cassino educativo com temática *Western Luxury*, desenvolvido para demonstrar matematicamente como a casa sempre tem vantagem, tudo isso rodando diretamente no seu navegador.
+Bem-vindo ao **Monte da Ruína**, um simulador de cassino educativo com temática *Western Luxury*.
+
+Este projeto foi desenvolvido com um **objetivo duplo**:
+1.  Demonstrar matematicamente (via *House Edge*) como a "banca" sempre tem vantagem estatística a longo prazo.
+2.  **Servir como prova de conceito sobre o que é possível criar com Inteligência Artificial**, utilizando-a como ferramenta principal para gerar código, lógica complexa, design de interface e assets gráficos (SVGs) em tempo recorde.
 
 ---
 
-## 👥 Criadores
+## 👥 Autoria e Desenvolvimento
 
-Este projeto foi idealizado e desenvolvido por:
+Projeto idealizado e coordenado por:
 
 * **Cristhian Mazon**
 * **Eloize Aiume**
-* **Gemini** (Co-autor IA / Arquiteto de Código)
+
+Ferramentas utilizadas:
+* **Gemini (IA):** Atuou como ferramenta de par-programação, auxiliando na arquitetura, geração de código React, criação de SVGs (cartas e avatares) e redação de conteúdo criativo.
 
 ---
 
 ## 🎲 A Lógica do Jogo
 
-O jogo é uma variação digital do clássico "Three-Card Monte" (ou o jogo da bolinha nos copos). O objetivo é encontrar o **Valete (Ouro)** entre três cartas viradas. Se encontrar a **Caveira (Ruína)**, a aposta é perdida.
+O jogo é uma variação digital do clássico "Three-Card Monte". O objetivo é encontrar o **Valete (Ouro)** entre três cartas viradas. Se encontrar a **Caveira (Ruína)**, a aposta é perdida.
 
 ### Matemática e Probabilidade (House Edge)
 
-Diferente de um jogo justo (onde 1 em 3 daria 33% de chance), o Monte da Ruína opera com **EV (Valor Esperado) Negativo**, garantindo a vantagem da banca a longo prazo. As probabilidades são calculadas no *backend* (lógica do React) antes da animação ocorrer:
+Diferente de um jogo justo, o Monte da Ruína opera com **EV (Valor Esperado) Negativo**. As probabilidades são calculadas no *backend* antes da animação ocorrer:
 
 | Nível | Multiplicador | Chance de Vitória | EV (House Edge) |
 | :--- | :---: | :---: | :---: |
@@ -30,42 +36,40 @@ Diferente de um jogo justo (onde 1 em 3 daria 33% de chance), o Monte da Ruína 
 | 🥈 **Prata** | **3.0x** | 20% | -0.40 |
 | 🥇 **Ouro** | **10.0x** | 5% | -0.50 |
 
-*O sistema utiliza `Math.random()` para determinar o resultado com base nessas porcentagens exatas.*
-
 ---
 
-## 🚀 Funcionalidades Principais
+## 🚀 Funcionalidades (Powered by AI)
+
+Toda a lógica abaixo foi implementada para rodar **100% no navegador**, sem necessidade de servidores externos.
 
 ### 🔐 Sistema de Contas Local
-* **Login & Cadastro:** Sistema de autenticação que roda 100% no navegador (sem backend).
-* **Persistência de Dados:** O saldo, histórico de partidas e estatísticas de cada jogador ("Xerife", "Bandido", etc.) ficam salvos no `localStorage` da máquina.
-* **Perfis Personalizados:** Galeria de avatares temáticos (estilo "Procurado") e animais do oeste gerados via código.
+* **Login & Cadastro:** Autenticação simulada que roda no *Client-Side*.
+* **Persistência:** Saldo, histórico e estatísticas individuais salvos no `localStorage`.
+* **Perfis:** Galeria de avatares temáticos (Xerife, Bandido) e animais (Lobo, Urso) gerados via código.
 
 ### 💰 Economia & Mecânicas
-* **Carteira (Tesouraria):** Simulação realista de Depósito e Saque via PIX (Fake).
-* **Gatilho da Ganância:** Após 3 vitórias seguidas, o jogo desafia o jogador a dobrar a aposta em um modal de "Tudo ou Nada".
-* **Game Over (Pé na Cova):** Se o saldo cair abaixo da aposta mínima (R$ 10,00), o jogador "fale" e precisa depositar mais para continuar.
+* **Carteira:** Simulação de Depósito e Saque via PIX (Fake).
+* **Gatilho da Ganância:** Modal que desafia o jogador a dobrar a aposta após 3 vitórias seguidas.
+* **Pé na Cova:** Mecânica de "Game Over" quando o saldo atinge zero.
 
 ### 🎨 UI/UX Imersiva
-* **Identidade Visual:** Paleta de cores Vermelho Sangue (`#580011`) e Dourado (`#FBBF24`) com a fonte *Abhaya Libre ExtraBold*.
-* **Áudio:** Efeitos sonoros dramáticos de vitória (torcida) e derrota (sino fúnebre).
-* **Humor:** Rodapé com propagandas rotativas falsas e duvidosas do Velho Oeste (ex: "Urubu do Pix", "Vende-se Cavalo Cego").
-* **Cartas SVG:** Desenhos vetoriais de Ouro e Caveiras criados via código, sem dependência de imagens externas.
+* **Identidade Visual:** Paleta Vermelho Sangue (`#580011`) e Dourado (`#FBBF24`) com tipografia *Abhaya Libre ExtraBold*.
+* **Assets via Código:** As cartas (Barras de Ouro e Caveira de Chapéu) são SVGs desenhados diretamente em código, sem arquivos de imagem pesados.
+* **Humor:** Rodapé com propagandas rotativas falsas do Velho Oeste (ex: "Urubu do Pix").
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
-* **React** + **Vite** (Framework e Build Tool)
-* **Tailwind CSS** (Estilização)
-* **Framer Motion** (Animações fluídas)
+* **React** + **Vite**
+* **Tailwind CSS**
+* **Framer Motion** (Animações)
 * **Lucide React** (Ícones)
-* **Recharts** (Gráficos de estatísticas)
-* **DiceBear API** (Geração de Avatares Humanizados)
+* **Recharts** (Gráficos)
 
 ---
 
-## 📦 Como Rodar o Projeto
+## 📦 Como Rodar
 
 1.  **Clone o repositório:**
     ```bash
@@ -79,8 +83,8 @@ Diferente de um jogo justo (onde 1 em 3 daria 33% de chance), o Monte da Ruína 
     ```bash
     npm run dev
     ```
-4.  Acesse `http://localhost:5173` e divirta-se!
+4.  Acesse `http://localhost:5173`.
 
 ---
 
-*Desenvolvido com 🥃 uísque virtual, React e muita sorte.*
+*Desenvolvido como experimento de co-criação Humano-IA.*
