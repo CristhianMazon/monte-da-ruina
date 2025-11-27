@@ -130,7 +130,7 @@ const GameScreen = ({ navigateTo }) => {
         }, 500);
     };
 
-    // Estilos Visuais (Versão Grande/Luxo)
+    // Estilos Visuais
     const betControlBtnStyle = "bg-[#3E2723] hover:bg-[#4E3733] text-[#FBBF24] font-extrabold py-3 px-4 rounded-full border-2 border-[#FBBF24] shadow-md transition-all active:scale-95 text-xl";
     const betControlMfBtnStyle = "bg-[#3E2723] hover:bg-[#4E3733] text-[#FBBF24]/80 font-extrabold py-3 px-4 rounded-full border-2 border-[#FBBF24]/50 shadow-md transition-all active:scale-95 text-xl";
 
@@ -220,7 +220,7 @@ const GameScreen = ({ navigateTo }) => {
                 </div>
             )}
 
-            {/* ESQUERDA: SELEÇÃO DE RISCO (W-64 / Grande) */}
+            {/* ESQUERDA: SELEÇÃO DE RISCO */}
             <div className="w-full lg:w-64 flex flex-col justify-between border-2 border-[#FBBF24] p-5 rounded-3xl bg-black/20 shadow-2xl mt-4 relative z-10 h-[600px]">
                 {RISK_CARDS.map((card) => {
                     const isSelected = selectedRiskId === card.id;
@@ -256,8 +256,9 @@ const GameScreen = ({ navigateTo }) => {
             {/* CENTRO: ÁREA DO JOGO */}
             <div className="flex-1 flex flex-col items-center justify-start w-full relative z-10 px-4">
                 
+                {/* MUDANÇA AQUI: Título ajustado para 5xl e inline-block */}
                 <div className="mb-12 mt-4 text-center">
-                    <h1 className="text-6xl font-extrabold text-[#FBBF24] tracking-widest drop-shadow-lg uppercase inline-block border-b-4 border-[#FBBF24] pb-2 px-4">
+                    <h1 className="text-5xl font-extrabold text-[#FBBF24] tracking-widest drop-shadow-lg uppercase inline-block border-b-4 border-[#FBBF24] pb-2">
                         Monte da Ruína
                     </h1>
                 </div>
@@ -306,7 +307,7 @@ const GameScreen = ({ navigateTo }) => {
                 </div>
             </div>
 
-            {/* DIREITA: CONTROLES DE APOSTA (W-64 / Grande) */}
+            {/* DIREITA: CONTROLES DE APOSTA */}
             <div className="w-full lg:w-64 flex flex-col justify-between items-center border-2 border-[#FBBF24] p-6 rounded-3xl bg-[#580011] shadow-2xl mt-4 relative z-10 h-[600px]">
                 
                 <div className="w-full flex flex-col gap-4">
