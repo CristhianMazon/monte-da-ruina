@@ -6,15 +6,12 @@ export const useGame = () => useContext(GameContext);
 
 const INITIAL_BALANCE = 100.0;
 export const BET_AMOUNT = 10;
+// NOVO: Limite do Cofre (1 Milhão)
+export const MAX_BALANCE = 1000000.0; 
 
 export const RISK_CARDS = [
-    // BRONZE ATUALIZADO: 45% de Chance | Multiplicador 2x
     { id: '1', name: 'Bronze', multiplier: 2, winChance: 0.45, color: '#cd7f32', theme: 'Risco Baixo' }, 
-    
-    // PRATA ATUALIZADO: Multiplicador 4x
     { id: '2', name: 'Prata', multiplier: 4, winChance: 0.20, color: '#c0c0c0', theme: 'Risco Médio' }, 
-    
-    // OURO (Mantido): Multiplicador 10x
     { id: '3', name: 'Ouro', multiplier: 10, winChance: 0.05, color: '#FBBF24', theme: 'Risco Alto' }, 
 ];
 
@@ -96,6 +93,9 @@ export const GameProvider = ({ children }) => {
             }
             newBalance = Math.max(0, newBalance);
 
+            // Se ganhar e passar do limite, trava no limite (Opcional, mas evita números quebrados)
+            // newBalance = Math.min(newBalance, MAX_BALANCE); 
+
             setBets(prevBets => {
                 const nextRoundNum = prevBets.length; 
                 return [...prevBets, { round: nextRoundNum, balance: newBalance }];
@@ -120,21 +120,29 @@ export const GameProvider = ({ children }) => {
 
     const deposit = useCallback((amount) => {
         const integerAmount = Math.floor(amount); 
+        
+        // MUDANÇA AQUI: Verificação de limite
         if (integerAmount > 0) {
+            if (balance + integerAmount > MAX_BALANCE) {
+                return { success: false, message: "O cofre está cheio! Limite de R$ 1 Milhão atingido." };
+            }
+
             setBalance(prev => prev + integerAmount);
             setBets(prev => {
                 const lastBet = prev[prev.length - 1] || { balance: 0, round: 0 };
-                return [...prev, { round: prev.length, balance: lastBet.balance + integerAmount }];
+                return [...prev.slice(0, -1), { ...lastBet, balance: lastBet.balance + integerAmount }];
             });
+            return { success: true };
         }
-    }, []);
+        return { success: false, message: "Valor inválido." };
+    }, [balance]); // Dependência de balance adicionada para checar o limite
 
     const withdraw = useCallback((amount) => {
         if (amount > 0 && balance >= amount) {
             setBalance(prev => prev - amount);
             setBets(prev => {
                 const lastBet = prev[prev.length - 1] || { balance: 0, round: 0 };
-                return [...prev, { round: prev.length, balance: lastBet.balance - amount }];
+                return [...prev.slice(0, -1), { ...lastBet, balance: lastBet.balance - amount }];
             });
             return true;
         }
