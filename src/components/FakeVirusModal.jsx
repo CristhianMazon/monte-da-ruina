@@ -1,26 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Skull, ShieldAlert } from 'lucide-react';
+import { X, Skull, ShieldAlert, ArrowRight } from 'lucide-react';
 
 const HACKER_LOGS = [
     "Connecting to host 192.168.0.1...",
     "Bypassing firewall security...",
-    "Accessing C:/Windows/System32...",
-    "Downloading payload: TROJAN_HORSE_V2.exe...",
+    "Accessing wallet_data.json...",
+    "Transferring funds to: CONTA_DO_AGIOTA...",
     "Injecting malicious script...",
-    "Stealing browser passwords...",
-    "Encrypting hard drive...",
-    "Uploading photos to Dark Web...",
+    "Calculating 10% tax...",
     "Deleting System32...",
     "Formatting C: drive...",
-    "Installing crypto miner...",
     "ERROR: CRITICAL FAILURE...",
-    "RETRYING CONNECTION..."
+    "OPERATION SUCCESSFUL."
 ];
 
-const FakeVirusModal = ({ isOpen, onClose }) => {
+const FakeVirusModal = ({ isOpen, onClose, onPunish, navigateTo }) => {
     const [logs, setLogs] = useState([]);
     const [showReveal, setShowReveal] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [punishmentResult, setPunishmentResult] = useState({ stolen: 0, bankrupt: false });
+    
     const scrollRef = useRef(null);
 
     useEffect(() => {
@@ -29,48 +28,59 @@ const FakeVirusModal = ({ isOpen, onClose }) => {
             setShowReveal(false);
             setProgress(0);
 
-            // Adiciona logs estilo Matrix
             let logIndex = 0;
             const logInterval = setInterval(() => {
                 if (logIndex < HACKER_LOGS.length) {
                     setLogs(prev => [...prev, HACKER_LOGS[logIndex]]);
                     logIndex++;
-                    // Rola para baixo automaticamente
                     if (scrollRef.current) {
                         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
                     }
                 } else {
                     clearInterval(logInterval);
-                    // Mostra a revelação depois dos logs
-                    setTimeout(() => setShowReveal(true), 1000);
-                }
-            }, 300); // Velocidade das linhas
+                    
+                    // EXECUTA O ROUBO
+                    if (onPunish) {
+                        const result = onPunish(); 
+                        setPunishmentResult({ stolen: result.stolenAmount, bankrupt: result.isBankrupt });
+                    }
 
-            // Barra de progresso fake
+                    setTimeout(() => setShowReveal(true), 800);
+                }
+            }, 250); 
+
             const progressInterval = setInterval(() => {
                 setProgress(old => {
                     if (old >= 100) {
                         clearInterval(progressInterval);
                         return 100;
                     }
-                    return old + Math.random() * 10;
+                    return old + Math.random() * 15;
                 });
-            }, 400);
+            }, 300);
 
             return () => {
                 clearInterval(logInterval);
                 clearInterval(progressInterval);
             };
         }
-    }, [isOpen]);
+    }, [isOpen, onPunish]);
 
     if (!isOpen) return null;
+
+    const handleFinalAction = () => {
+        if (punishmentResult.bankrupt) {
+            navigateTo('wallet');
+            onClose();
+        } else {
+            onClose();
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-[99999] bg-black flex flex-col font-mono p-4 md:p-10">
             
             {!showReveal ? (
-                // TELA DE "VÍRUS/HACKER"
                 <div className="w-full max-w-4xl mx-auto flex flex-col gap-4 h-full justify-center">
                     <div className="text-red-500 font-bold text-2xl animate-pulse flex items-center gap-2 uppercase">
                         <ShieldAlert className="w-8 h-8" />
@@ -83,7 +93,7 @@ const FakeVirusModal = ({ isOpen, onClose }) => {
                             style={{ width: `${progress}%` }}
                         ></div>
                         <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white z-10">
-                            INFECTANDO SISTEMA: {Math.min(100, progress).toFixed(0)}%
+                            TRANSFERINDO FUNDOS: {Math.min(100, progress).toFixed(0)}%
                         </span>
                     </div>
 
@@ -101,28 +111,48 @@ const FakeVirusModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
             ) : (
-                // TELA DE TROLLAGEM (A Revelação)
                 <div className="absolute inset-0 bg-[#580011] flex flex-col items-center justify-center text-center p-6 animate-in zoom-in duration-300">
-                    <div className="bg-black/30 p-8 rounded-[3rem] border-4 border-[#FBBF24] shadow-2xl max-w-2xl">
+                    <div className="bg-black/30 p-8 rounded-[3rem] border-4 border-[#FBBF24] shadow-2xl max-w-2xl w-full">
                         <Skull className="w-24 h-24 text-[#FBBF24] mx-auto mb-6 animate-bounce" />
                         
-                        <h1 className="text-4xl md:text-6xl font-black text-[#FBBF24] font-serif uppercase tracking-widest mb-4 drop-shadow-md">
-                            FOI TROLADO, COWBOY!
+                        <h1 className="text-4xl md:text-6xl font-black text-[#FBBF24] font-serif uppercase tracking-widest mb-2 drop-shadow-md">
+                            FOI TROLADO!
                         </h1>
                         
-                        <p className="text-white text-xl md:text-2xl font-serif mb-8 leading-relaxed">
-                            Achou mesmo que ia ganhar dinheiro fácil clicando em propaganda? 
-                            <br/><br/>
-                            <span className="text-[#FBBF24] font-bold">Isso aqui é o Velho Oeste.</span> 
+                        <p className="text-white text-lg md:text-2xl font-serif mb-6 leading-relaxed">
+                            Achou mesmo que ia ganhar dinheiro fácil? 
                             <br/>
-                            O único vírus aqui é a sua ganância. 😂
+                            O vírus acabou de <span className="text-red-500 font-black">ROUBAR 10%</span> do seu saldo.
                         </p>
 
+                        <div className="bg-red-900/50 border-2 border-red-500 p-4 rounded-xl mb-8">
+                            <p className="text-red-200 font-bold text-sm uppercase tracking-widest">Valor Subtraído</p>
+                            <p className="text-4xl font-black text-white mt-1">
+                                - R$ {punishmentResult.stolen.toFixed(2)}
+                            </p>
+                        </div>
+
+                        {punishmentResult.bankrupt && (
+                            <p className="text-[#FBBF24] font-bold text-lg mb-4 animate-pulse">
+                                ⚠️ E OLHA SÓ... VOCÊ FALIU! (Saldo &lt; R$ 10)
+                            </p>
+                        )}
+
                         <button 
-                            onClick={onClose}
-                            className="px-8 py-4 bg-[#FBBF24] text-[#580011] font-black text-xl rounded-xl uppercase tracking-widest hover:scale-105 transition-transform shadow-lg"
+                            onClick={handleFinalAction}
+                            className={`
+                                px-8 py-4 font-black text-xl rounded-xl uppercase tracking-widest hover:scale-105 transition-transform shadow-lg flex items-center justify-center gap-3 w-full
+                                ${punishmentResult.bankrupt 
+                                    ? 'bg-[#FBBF24] text-[#580011]' 
+                                    : 'bg-stone-700 text-white hover:bg-stone-600' 
+                                }
+                            `}
                         >
-                            VOLTAR PRO JOGO (COM VERGONHA)
+                            {punishmentResult.bankrupt ? (
+                                <>RESSUSCITAR (DEPOSITAR) <ArrowRight className="w-6 h-6" /></>
+                            ) : (
+                                "VOLTAR PRO JOGO (MAIS POBRE)"
+                            )}
                         </button>
                     </div>
                 </div>

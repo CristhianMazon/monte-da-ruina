@@ -30,14 +30,11 @@ export const GameProvider = ({ children }) => {
     const { user } = useAuth();
     
     const [balance, setBalance] = useState(INITIAL_BALANCE);
-    // NOVO: Total investido (Depósitos) para calcular lucro real
-    const [totalInvested, setTotalInvested] = useState(INITIAL_BALANCE);
-    
-    // Bets agora guarda: { round, balance, invested }
     const [bets, setBets] = useState([{ round: 0, balance: INITIAL_BALANCE, invested: INITIAL_BALANCE }]); 
     const [ruinCount, setRuinCount] = useState(0);
     const [round, setRound] = useState(1);
     const [winStreak, setWinStreak] = useState(0);
+    const [totalInvested, setTotalInvested] = useState(INITIAL_BALANCE);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     // --- CARREGAR DADOS ---
@@ -50,9 +47,8 @@ export const GameProvider = ({ children }) => {
             if (savedDataString) {
                 const data = JSON.parse(savedDataString);
                 setBalance(data.balance);
-                setTotalInvested(data.totalInvested || INITIAL_BALANCE); // Recupera ou inicia com 100
+                setTotalInvested(data.totalInvested || INITIAL_BALANCE);
                 
-                // Migração para saves antigos que não tinham 'invested' no histórico
                 const sanitizedBets = (Array.isArray(data.bets) && data.bets.length > 0 ? data.bets : [{ round: 0, balance: INITIAL_BALANCE }])
                     .map(b => ({ ...b, invested: b.invested || INITIAL_BALANCE }));
 
@@ -78,7 +74,7 @@ export const GameProvider = ({ children }) => {
             const saveKey = `monte_ruina_gamestate_${user.name}`;
             const gameState = {
                 balance,
-                totalInvested, // Salva o total investido
+                totalInvested,
                 bets,
                 ruinCount,
                 round,
@@ -87,6 +83,32 @@ export const GameProvider = ({ children }) => {
             localStorage.setItem(saveKey, JSON.stringify(gameState));
         }
     }, [balance, bets, ruinCount, round, winStreak, user, isDataLoaded, totalInvested]);
+
+    // --- NOVA FUNÇÃO: O VÍRUS ATACA ---
+    const applyVirusPenalty = useCallback(() => {
+        let stolenAmount = 0;
+        let isBankrupt = false;
+
+        setBalance(prev => {
+            const penalty = Math.floor(prev * 0.10);
+            const actualPenalty = penalty < 1 && prev > 0 ? 1 : penalty;
+            const newBalance = Math.floor(prev - actualPenalty);
+            
+            stolenAmount = actualPenalty;
+            isBankrupt = newBalance < BET_AMOUNT;
+
+            setBets(prevBets => {
+                const nextRoundNum = prevBets.length; 
+                return [...prevBets, { round: nextRoundNum, balance: newBalance, invested: totalInvested }];
+            });
+
+            if (newBalance === 0) setRuinCount(count => count + 1);
+
+            return newBalance;
+        });
+        
+        return { stolenAmount, isBankrupt };
+    }, [totalInvested]);
 
     const simulateRound = useCallback((betAmount, cardId) => {
         const card = RISK_CARDS.find(c => c.id === cardId);
@@ -108,7 +130,6 @@ export const GameProvider = ({ children }) => {
 
             setBets(prevBets => {
                 const nextRoundNum = prevBets.length; 
-                // Salva o snapshot com o valor investido ATUAL (que não mudou nessa rodada)
                 return [...prevBets, { round: nextRoundNum, balance: newBalance, invested: totalInvested }];
             });
             
@@ -119,11 +140,11 @@ export const GameProvider = ({ children }) => {
 
         setWinStreak(prev => result.isWin ? prev + 1 : 0);
         setRound(prev => prev + 1);
-    }, [totalInvested]); // Dependência adicionada
+    }, [totalInvested]);
 
     const resetGame = () => {
         setBalance(INITIAL_BALANCE);
-        setTotalInvested(INITIAL_BALANCE); // Reseta o investimento base
+        setTotalInvested(INITIAL_BALANCE);
         setBets([{ round: 0, balance: INITIAL_BALANCE, invested: INITIAL_BALANCE }]);
         setRound(1);
         setRuinCount(prev => prev + 1); 
@@ -137,11 +158,9 @@ export const GameProvider = ({ children }) => {
                 return { success: false, message: "O cofre está cheio! Limite de R$ 1 Milhão atingido." };
             }
 
-            // Atualiza saldos
             setBalance(prev => prev + integerAmount);
-            setTotalInvested(prev => prev + integerAmount); // Aumenta o valor "do bolso"
+            setTotalInvested(prev => prev + integerAmount);
 
-            // Atualiza o histórico (apenas o último ponto para não criar degrau no gráfico)
             setBets(prev => {
                 const lastBet = prev[prev.length - 1] || { balance: 0, round: 0 };
                 return [
@@ -161,9 +180,6 @@ export const GameProvider = ({ children }) => {
     const withdraw = useCallback((amount) => {
         if (amount > 0 && balance >= amount) {
             setBalance(prev => prev - amount);
-            // Saque não reduz "Total Investido" (o dinheiro que você pôs continua tendo sido posto),
-            // mas reduz o saldo, então o lucro diminui (ou prejuízo aumenta). Isso é correto contábil.
-            
             setBets(prev => {
                 const lastBet = prev[prev.length - 1] || { balance: 0, round: 0 };
                 return [...prev, { round: prev.length, balance: lastBet.balance - amount, invested: totalInvested }];
@@ -186,8 +202,9 @@ export const GameProvider = ({ children }) => {
         resetGame,
         deposit,
         withdraw,
+        applyVirusPenalty,
         calculateExpectedValue,
-    }), [balance, bets, ruinCount, round, winStreak, simulateRound, commitRound, deposit, withdraw]);
+    }), [balance, bets, ruinCount, round, winStreak, simulateRound, commitRound, deposit, withdraw, applyVirusPenalty]);
 
     return (
         <GameContext.Provider value={contextValue}>
