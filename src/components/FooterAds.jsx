@@ -12,7 +12,7 @@ const HANDCRAFTED_ADS = [
     { id: 3, text: "🍺 PROMOÇÃO NO SALOON: PAGUE 1 E LEVE UM TIRO DE GRAÇA!", subtext: "Oferta válida apenas para forasteiros que olharem torto.", bg: "bg-gradient-to-r from-amber-900 to-amber-600", border: "border-amber-400" },
     { id: 4, text: "🔮 CARTOMANTE MADAME ZORA: PREVEJO QUE VOCÊ VAI PERDER TUDO HOJE!", subtext: "Consultas a partir de R$ 5,00. Traga seu desespero.", bg: "bg-gradient-to-r from-purple-900 to-purple-600", border: "border-purple-400" },
     { id: 5, text: "⚠️ CUIDADO: O JOGO VICIA (MAS A GENTE ADORA O SEU DINHEIRO).", subtext: "Jogue com responsabilidade (ou não, quem liga?).", bg: "bg-gradient-to-r from-blue-900 to-blue-600", border: "border-blue-400" },
-    { id: 6, text: "💋 MÃES SOLTEIRAS EM [SEU BAIRRO] QUEREM CONHECER VOCÊ AGORA!", subtext: "Elas odeiam joguinhos... mas adoram quem ganha no Monte da Ruína!", bg: "bg-gradient-to-r from-pink-900 to-pink-600", border: "border-pink-400" },
+    { id: 6, text: "💋 MÃES SOLTEIRAS EM SEU BAIRRO ESTÃO DOIDAS PARA TE CONHECER!", subtext: "Elas odeiam joguinhos... mas adoram quem ganha no Monte da Ruína!", bg: "bg-gradient-to-r from-pink-900 to-pink-600", border: "border-pink-400" },
     
     // NOVOS (Pacote +80)
     { text: "🧨 LIMPEZA DE CHAMINÉ COM DINAMITE.", subtext: "Rápido, eficaz e você nunca mais vai precisar limpar (porque não terá chaminé)." },
@@ -103,35 +103,97 @@ const HANDCRAFTED_ADS = [
 
 // --- PARTE 2: GERADOR PROCEDURAL (O CAOS INFINITO) ---
 const GENERATOR = {
-    actions: ["VENDE-SE", "ALUGA-SE", "PROCURO", "TROCO", "LEILÃO DE", "DOA-SE", "ROUBO", "COMPRO", "FINANCIO"],
+    actions: [
+        "VENDE-SE", "ALUGA-SE", "PROCURO", "TROCO", "LEILÃO DE", "DOA-SE", "ROUBO", "COMPRO", "FINANCIO",
+        "EMPRESTO", "DEVOLVO", "SUMIU", "ANUNCIO", "ACEITO APOSTA POR", "NEGOCIO", "LIBERO", 
+        "APREENDO", "SEQUESTRO DE", "EXPORTO", "IMPORTO", "ENTERRADO", "ENCONTREI", "RECUPERO",
+        "DESAPARECIDO", "OFERTA RELÂMPAGO DE", "QUEIMA DE ESTOQUE DE", "LIQUIDAÇÃO DE", 
+        "PREGO EM", "FAÇO RIFA DE", "ALUGO POR HORA", "REVENDO", "MERCADO NEGRO:", 
+        "OCASIÃO ÚNICA:", "ÚLTIMA CHANCE PARA", "PROCURA-SE", "PEGO EM TROCA", "BAFÔMETRO APROVOU",
+        "INVESTIMENTO EM", "SOLICITO", "APRESENTO", "SMUGGLE DE", "CHEGOU NOVIDADE:", 
+        "QUEBREI E AGORA VENDO", "PEGO CUIDADO COM", "PERDI E AGORA ANUNCIO", "DOAÇÃO FORÇADA DE",
+    ],
     items: [
-        "SOGRA", "RIM", "FÍGADO", "CORAÇÃO DE EX", "CAPIVARA", "ANÃO DE JARDIM", 
-        "OPALA 76", "MONZA TUBARÃO", "UNHAS ROÍDAS", "DÍVIDA NO SERASA", 
+        "SOGRA", "RIM", "FÍGADO", "CORAÇÃO DE EX", "CAPIVARA", "ANÃO DE JARDIM",
+        "OPALA 76", "MONZA TUBARÃO", "UNHAS ROÍDAS", "DÍVIDA NO SERASA",
         "NOME SUJO", "ESPÍRITO OBSESSOR", "LOTE NO CÉU", "TERRENO NO INFERNO",
         "VOTO", "DIPLOMA", "TESTE DE GRAVIDEZ POSITIVO", "FITA K7 DO CHAVES",
         "PIRULITO DE ESTRUME", "KIT GAY", "ET DE VARGINHA", "GRÁVIDA DE TAUBATÉ",
         "CALCINHA DE VÓ", "CUECA FURADA", "LÁGRIMAS DE CROCODILO", "SORRISO DE MONALISA",
-        "DENTADURA", "PERNA DE PAU", "OLHO DE VIDRO", "GATO MORTO", "GALINHA PRETA"
+        "DENTADURA", "PERNA DE PAU", "OLHO DE VIDRO", "GATO MORTO", "GALINHA PRETA",
+        "GALO CEGO", "FRANGO DE BORRACHA", "POMBO TREINADO", "CACHORRO QUENTE SEM PÃO",
+        "CABEÇA DE BONECA", "CARTEIRA VAZIA", "BOLETO ATRASADO", "CHAVE DO CARRO QUE NÃO EXISTE",
+        "TAMAGOSHI POSSUÍDO", "DISCO PIRATA DO FAUSTÃO", "BONECO DO FOFÃO",
+        "CELULAR COM TELA QUEBRADA", "COPO DO GIRAFA'S", "MOTO SEM FREIO",
+        "CIGARRO APAGADO", "PEDRA FILOSOFAL FALSA", "CARNE MOÍDA SUSPEITA",
+        "TAMPA DE PANELA", "CONTROLE SEM PILHA", "TV TUBO 14 POLEGADAS",
+        "RECEITA DE BOLO ERRADA", "RAÇÃO HUMANA", "CARTEADO DE VELHO",
+        "BARRAQUINHA DE PRAIA", "SOMBRA DE PESSOA", "AUTOESTIMA USADA",
+        "AMIGO IMAGINÁRIO", "TIA DO ZAP", "PADRE VIRTUAL", "CURSED OBJECT",
+        "ÓCULOS EMBAÇADO", "RELÓGIO PARADO", "GPS QUE SÓ ERRA", "MAPA DO TESOURO FALSO",
+        "CACHAÇA BATIZADA", "CAMISA DO ZÉ NINGUÉM", "CUECA DO GALO CEGO",
+        "ALMA PENADA", "APERTO DE MÃO DUVIDOSO", "FOFOCA INCOMPLETA",
+        "TAMBORETE", "CADEIRA MONOBLOCO TORTA", "CADEADO SEM CHAVE",
+        "PNEU CARECA", "OBJETO NÃO IDENTIFICADO", "CHUTEIRA FURADA",
+        "FONE MONO", "CHUPA-CABRA", "PERU DO NATAL DE 2004",
+        "QUEIJO DURO", "CARREGADOR QUE NÃO CARREGA", "FAROL DE BICICLETA",
+        "CAFÉ REQUENTADO", "VASFASHION", "PANETONE SALGADO",
+        "MEIA SOLTEIRA", "VASSOURA DE AÇO", "SAPATO QUE MENTE O TAMANHO",
+        "CHINELO ASSASSINO", "CARRO QUE PEGA ÀS VEZES", "PLACA DO CARRO ESQUECIDA",
+        "TAPETE VOADOR COM BURACO", "BEXIGA MURCHA", "BICHO PREGUIÇA DOENTE",
+        "ÓLEO DE PEROBA", "SONHO FRUSTRADO", "VÍCIO EM CAFÉ", "CORTINA QUE NÃO TAMPA NADA",
+        "LUA MINGUANTE FALSA", "ESTRELA CADENTE EM GREVE", "NAVE QUE NÃO SOBE",
+        "COXINHA SEM FRANGO", "SEMENTE DE MELANCIA", "PIPOCA MURCHA",
+        "CARTA DE AMOR MAL ESCRITA", "PINTURA ABSTRATA DUVIDOSA", "ESCULTURA DO SHREK",
+        "BARALHO MARCADO", "MOEDA DE 1 REAL FALSA", "ESCOVA DE DENTE TORTA",
+        "SABRE DE LUZ DE PLÁSTICO", "ESPADA DE MADEIRA MOLE",
+        "TECLADO QUE NÃO TEM ENTER", "PILHA USADA", "SACO DE AR",
+        "BARRIL DE RUM IMAGINÁRIO", "PEDRA DE AMOLAR", "BICICLETA FANTASMA",
     ],
     conditions: [
-        "SEMI-NOVO.", "COM DEFEITO.", "POSSUÍDO PELO DEMÔNIO.", "ROUBADO ONTEM.", 
+        "SEMI-NOVO.", "COM DEFEITO.", "POSSUÍDO PELO DEMÔNIO.", "ROUBADO ONTEM.",
         "COM CHEIRO DE ENXOFRE.", "SEM DOCUMENTO.", "ACEITO VALE-REFEIÇÃO.",
         "PAGAMENTO EM BALA.", "SÓ ACEITO OURO.", "URGENTE (POLÍCIA CHEGANDO).",
         "MOTIVO: VÍCIO EM JOGO.", "USADO POR FAMOSO (MENTIRA).", "COM MARCAS DE TIRO.",
         "NUNCA USADO.", "QUASE NOVO.", "PRECISA DE REPAROS.", "NÃO FUNCIONA.",
-        "COM BABÁ DE BRINDE.", "MORDIDO POR ZUMBI.", "RADIOATIVO."
+        "COM BABÁ DE BRINDE.", "MORDIDO POR ZUMBI.", "RADIOATIVO.",
+        "INFESTADO DE POMBOS.", "COM ENERGIA NEGATIVA.", "REGA JÁ QUE EU NÃO AGUENTO MAIS.",
+        "FUNCIONA SÓ NA CHUVA.", "GRITA ÀS VEZES.", "OBJETO AMALDIÇOADO.",
+        "VEM COM ASSOMBRAÇÃO.", "CHEIRO DUVIDOSO.", "TOMBADO PELO IPHAN.",
+        "FURTO CONFESSADO.", "SEM GARANTIA NENHUMA.", "GARANTIA DE 5 SEGUNDOS.",
+        "TESTADO (E FALHOU).", "FUNCIONA MAS NÃO RECOMENDO.", "QUENTE AINDA.",
+        "CONGELADO DESDE 1999.", "DESATIVADO PELO EXÉRCITO.", "NÃO APROVADO PELA ANVISA.",
+        "APROVADO PELO IML.", "RESGATADO DO FUNDO DO MAR.", 
+        "NUNCA LAVADO.", "LAVADO DEMAIS.", "COM MOFO ARTESANAL.",
+        "PEGOU FOGO MAS APAGOU.", "DÁ SUSTO ÀS VEZES.", "PESA MAIS DO QUE PARECE.",
+        "VOCÊ NÃO VAI QUERER SABER O PORQUÊ.", "USADO EM RITUAL.",
+        "MANCHADO DE SANGUE (DE KETCHUP).", "COM INSTRUÇÕES EM LATIM.",
+        "VERSÃO BETA.", "EDIÇÃO LIMITADA (SORTE SUA).", 
+        "ACHADO NÃO É ROUBADO (MENTIRA).", "FUNCIONA À MANIVELA.",
     ],
     extras: [
-        "Tratar com o Baixinho.", "Não chame a polícia.", "Dispenso curiosos.", 
+        "Tratar com o Baixinho.", "Não chame a polícia.", "Dispenso curiosos.",
         "Acompanha manual (em russo).", "Se morrer não reclame.", "Garantia 'Soy Yo'.",
         "Troco por cigarro.", "Aceito a alma como entrada.", "Entrega via pombo.",
-        "Fale com o Tonhão.", "Só no pix.", "Entrega em 24h (úteis).", "Não aceito devolução.",
-        "Troco por cachaça.", "Vem buscar (tô com medo).", "Motivo: Divórcio."
+        "Fale com o Tonhão.", "Só no pix.", "Entrega em 24h (úteis).",
+        "Não aceito devolução.", "Troco por cachaça.", "Vem buscar (tô com medo).",
+        "Motivo: Divórcio.",
+        "Não recomendo abrir.", "Se fizer barulho ignore.", "Testado pelos meus primos.",
+        "Não me pergunte como consegui.", "Traga luvas.", "Entrega só à noite.",
+        "Aceito até tampinha.", "Não liga, mas é bonito.", "Veio de família.",
+        "Pode chamar reforço.", "Se quebrar a culpa é sua.", "Proibido mostrar pra polícia.",
+        "Se correr pega.", "Chame senha 42.", "Não olhe diretamente.",
+        "Não apertar o botão vermelho.", "Funciona melhor com fé.",
+        "Quem comprar ganha um abraço.", "Só vendo porque preciso fugir.",
+        "Manual disponível no Telegram.", "Se sumir, não volto atrás.",
+        "Favor não alimentar.", "Troco por fiado.", "Pego chuva fácil.",
+        "Manda localização e reza.", "Entrego só se estiver sozinho.", "Não funciona na lua cheia."
     ]
 };
 
 const getRandomColorClasses = () => {
     const colorPairs = [
+        // --- Paleta original ---
         { bg: "bg-gradient-to-r from-gray-900 to-black", border: "border-gray-500" },
         { bg: "bg-gradient-to-r from-red-900 to-red-800", border: "border-red-500" },
         { bg: "bg-gradient-to-r from-blue-900 to-blue-800", border: "border-blue-500" },
@@ -140,7 +202,37 @@ const getRandomColorClasses = () => {
         { bg: "bg-gradient-to-r from-yellow-900 to-yellow-800", border: "border-yellow-500" },
         { bg: "bg-gradient-to-r from-pink-900 to-pink-800", border: "border-pink-500" },
         { bg: "bg-gradient-to-r from-indigo-900 to-indigo-800", border: "border-indigo-500" },
+
+        // --- Novas combinações premium ---
+        { bg: "bg-gradient-to-r from-rose-900 to-rose-800", border: "border-rose-500" },
+        { bg: "bg-gradient-to-r from-teal-900 to-teal-800", border: "border-teal-500" },
+        { bg: "bg-gradient-to-r from-cyan-900 to-cyan-800", border: "border-cyan-500" },
+        { bg: "bg-gradient-to-r from-orange-900 to-orange-800", border: "border-orange-500" },
+        { bg: "bg-gradient-to-r from-amber-900 to-amber-800", border: "border-amber-500" },
+        { bg: "bg-gradient-to-r from-lime-900 to-lime-800", border: "border-lime-500" },
+        { bg: "bg-gradient-to-r from-emerald-900 to-emerald-800", border: "border-emerald-500" },
+        { bg: "bg-gradient-to-r from-fuchsia-900 to-fuchsia-800", border: "border-fuchsia-500" },
+        { bg: "bg-gradient-to-r from-violet-900 to-violet-800", border: "border-violet-500" },
+        { bg: "bg-gradient-to-r from-slate-900 to-slate-800", border: "border-slate-500" },
+
+        // --- Tons mais metálicos / neons discretos (perfeitos pra anúncios) ---
+        { bg: "bg-gradient-to-r from-zinc-900 to-zinc-800", border: "border-zinc-500" },
+        { bg: "bg-gradient-to-r from-stone-900 to-stone-800", border: "border-stone-500" },
+        { bg: "bg-gradient-to-r from-neutral-900 to-neutral-800", border: "border-neutral-500" },
+        { bg: "bg-gradient-to-r from-red-950 to-red-800", border: "border-red-400" },
+        { bg: "bg-gradient-to-r from-blue-950 to-blue-700", border: "border-blue-400" },
+        { bg: "bg-gradient-to-r from-purple-950 to-purple-700", border: "border-purple-400" },
+        { bg: "bg-gradient-to-r from-pink-950 to-pink-700", border: "border-pink-400" },
+        { bg: "bg-gradient-to-r from-green-950 to-green-700", border: "border-green-400" },
+
+        // --- Temas mais “exóticos” e únicos ---
+        { bg: "bg-gradient-to-r from-amber-950 to-yellow-700", border: "border-yellow-400" },
+        { bg: "bg-gradient-to-r from-emerald-950 to-lime-700", border: "border-lime-400" },
+        { bg: "bg-gradient-to-r from-indigo-950 to-indigo-700", border: "border-indigo-400" },
+        { bg: "bg-gradient-to-r from-sky-950 to-sky-700", border: "border-sky-400" },
+        { bg: "bg-gradient-to-r from-rose-950 to-rose-700", border: "border-rose-400" },
     ];
+
     return colorPairs[Math.floor(Math.random() * colorPairs.length)];
 };
 
@@ -177,8 +269,7 @@ const FooterAds = ({ navigateTo }) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            // MUDANÇA 2: 50% de chance (0.5) na rotação
-            if (Math.random() > 0.5) { 
+            if (Math.random() > 0.7) { 
                 const randomIndex = Math.floor(Math.random() * HANDCRAFTED_ADS.length);
                 setCurrentAd(HANDCRAFTED_ADS[randomIndex]);
             } else {
