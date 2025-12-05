@@ -7,7 +7,7 @@ const FAQ_DATA = {
         <div className="space-y-4">
             <p>Bem-vindo ao <strong>Monte da Ruína</strong>. O jogo é simples, mas exige sangue frio:</p>
             <ol className="list-decimal pl-5 space-y-2">
-                <li><strong>Escolha seu Risco:</strong> Defina o multiplicador desejado: Bronze (1.5x), Prata (3x) ou o temido Ouro (10x).</li>
+                <li><strong>Escolha seu Risco:</strong> Defina o multiplicador desejado: Bronze (2x), Prata (4x) ou o temido Ouro (10x).</li>
                 <li><strong>Faça sua Aposta:</strong> Use o painel para definir o valor em Reais.</li>
                 <li><strong>O Desafio:</strong> Três cartas estão na mesa. Uma esconde o Valete (Tesouro) e duas escondem a Caveira (Ruína), exceto no modo Bronze onde a chance é maior.</li>
                 <li><strong>Vitória ou Derrota:</strong> Se achar o Valete, você multiplica seu dinheiro. Se achar a Caveira, a casa leva tudo.</li>
